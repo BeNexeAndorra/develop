@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DJ Virtual Profesional</title>
+    <style>
+        /* Variables CSS para colores */
+        :root {
+            --primary-color: #6200ea; /* Morado profundo */
+            --secondary-color: #03dac6; /* Turquesa */
+            --dark-color: #121212; /* Fondo oscuro */
+            --light-color: #f5f5f5; /* Texto claro */
+            --error-color: #cf6679; /* Rojo para errores */
+            --success-color: #00c853; /* Verde para éxito */
+            --card-background: #1e1e1e; /* Fondo de tarjetas */
+            --border-color: #333; /* Color de bordes sutil */
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-color);
+            color: var(--light-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        header h1 {
+            margin: 0;
+            color: var(--light-color);
+            font-size: 2.5em;
+            letter-spacing: 2px;
+        }
+        
+        main {
+            padding: 40px 0;
+        }
+        
+        section {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            padding: 30px;
+            border: 1px solid var(--border-color);
+        }
+        
+        h2 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--light-color);
+            font-weight: bold;
+        }
+        
+        input[type="file"],
+        input[type="number"] {
+            width: calc(100% - 20px);
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: #333;
+            color: var(--light-color);
+            font-size: 1em;
+            box-sizing: border-box; /* Incluye padding y borde en el ancho total */
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+            margin-right: 10px; /* Espacio entre botones */
+        }
+        
+        button:hover {
+            background-color: #7b2fe9;
+        }
+
+        button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+        
+        .file-list, .playlist-list {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #2a2a2a;
+        }
+        
+        .file-item, .playlist-item {
+            padding: 10px;
+            border-bottom: 1px solid #444;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .file-item:last-child, .playlist-item:last-child {
+            border-bottom: none;
+        }
+        
+        .file-info span, .playlist-info span {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .file-info .filename, .playlist-info .filename {
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        
+        .status-message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .status-message.success-message {
+            background-color: #00c85330; /* Verde claro */
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+        
+        .status-message.error-message {
+            background-color: #cf667930; /* Rojo claro */
+            color: var(--error-color);
+            border: 1px solid var(--error-color);
+        }
+
+        .status-message.info-message {
+            background-color: #03dac630; /* Turquesa claro */
+            color: var(--secondary-color);
+            border: 1px solid var(--secondary-color);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background-color: #333;
+            border-radius: 5px;
+            margin-top: 20px;
+            overflow: hidden; /* Asegura que la barra interna no desborde */
+            display: none; /* Oculto por defecto */
+        }
+
+        .progress-bar {
+            height: 25px;
+            width: 0%;
+            background-color: var(--primary-color);
+            text-align: center;
+            line-height: 25px; /* Centrar texto verticalmente */
+            color: white;
+            transition: width 0.3s ease-in-out;
+            font-weight: bold;
+        }
+
+        .download-link-container {
+            margin-top: 20px;
+            text-align: center;
+            display: none; /* Oculto por defecto */
+        }
+
+        .download-link-container a {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            padding: 15px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+        }
+
+        .download-link-container a:hover {
+            background-color: #03c6b5;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            color: #aaa;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .small-text {
+            font-size: 0.9em;
+            color: #bbb;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>DJ Virtual Profesional</h1>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <section id="upload-section">
+                <h2>Cargar Pistas y XML de iTunes</h2>
+                <form id="upload-form">
+                    <div class="form-group">
+                        <label for="audioFile">Seleccionar Archivo de Audio (MP3) o XML de iTunes:</label>
+                        <input type="file" id="audioFile" name="file" accept=".mp3,.xml" multiple>
+                    </div>
+                    <button type="submit" id="uploadButton">Cargar Archivo(s)</button>
+                </form>
+                <div id="uploadStatus" class="status-message info-message">Esperando archivos...</div>
+                
+                <h3>Archivos Cargados y Analizados:</h3>
+                <div id="fileListContainer" class="file-list">
+                    <p id="noFilesMessage">No hay archivos cargados aún.</p>
+                </div>
+                <button id="clearFilesButton" style="background-color: var(--error-color); margin-top: 20px;">Limpiar Archivos Cargados</button>
+            </section>
+
+            <section id="playlist-section">
+                <h2>Generar y Reproducir Mezcla</h2>
+                <div class="form-group">
+                    <label for="mixDuration">Duración deseada de la mezcla (minutos):</label>
+                    <input type="number" id="mixDuration" value="30" min="5" max="120">
+                </div>
+                <button id="generateMixButton">Generar Mezcla</button>
+                <div id="mixStatusContainer" class="status-message info-message" style="display: none;">
+                    <span id="mixStatusMessage">Iniciando...</span>
+                    <div class="progress-bar-container" id="mixProgressBarContainer">
+                        <div class="progress-bar" id="mixProgressBar">0%</div>
+                    </div>
+                    <div class="download-link-container" id="mixDownloadContainer">
+                        <a id="downloadMixLink" href="#" download style="display: none;">Descargar Mezcla</a>
+                    </div>
+                </div>
+
+                <h3>Playlist Generada:</h3>
+                <div id="playlistListContainer" class="playlist-list">
+                    <p id="noPlaylistMessage">La playlist se generará después de mezclar.</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 DJ Virtual Profesional. Todos los derechos reservados.</p>
+            <p class="small-text">Desarrollado con Flask, pydub, librosa.</p>
+        </div>
+    </footer>
+
+    <script>
+        const uploadForm = document.getElementById('upload-form');
+        const audioFile = document.getElementById('audioFile');
+        const uploadStatus = document.getElementById('uploadStatus');
+        const fileListContainer = document.getElementById('fileListContainer');
+        const noFilesMessage = document.getElementById('noFilesMessage');
+        const clearFilesButton = document.getElementById('clearFilesButton');
+
+        const generateMixButton = document.getElementById('generateMixButton');
+        const mixDurationInput = document.getElementById('mixDuration');
+        const mixStatusContainer = document.getElementById('mixStatusContainer');
+        const mixStatusMessage = document.getElementById('mixStatusMessage');
+        const mixProgressBarContainer = document.getElementById('mixProgressBarContainer');
+        const mixProgressBar = document.getElementById('mixProgressBar');
+        const downloadMixLink = document.getElementById('downloadMixLink');
+        const mixDownloadContainer = document.getElementById('mixDownloadContainer');
+        const playlistListContainer = document.getElementById('playlistListContainer');
+        const noPlaylistMessage = document.getElementById('noPlaylistMessage');
+
+        let uploadedFiles = []; // Almacena los resultados del análisis de los archivos
+        let generatedPlaylist = []; // Almacena la playlist generada
+
+        // Función para renderizar la lista de archivos cargados
+        const renderFileList = () => {
+            fileListContainer.innerHTML = ''; // Limpiar lista actual
+            if (uploadedFiles.length === 0) {
+                noFilesMessage.style.display = 'block';
+            } else {
+                noFilesMessage.style.display = 'none';
+                uploadedFiles.forEach(file => {
+                    const fileItem = document.createElement('div');
+                    fileItem.classList.add('file-item');
+                    fileItem.innerHTML = `
+                        <div class="file-info">
+                            <span class="filename">${file.filename}</span>
+                            <span class="small-text">BPM: ${file.bpm ? file.bpm.toFixed(2) : 'N/A'} | Clave: ${file.key || 'N/A'} (${file.camelot_key || 'N/A'}) | Energía: ${file.energy ? file.energy.toFixed(4) : 'N/A'} | Duración: ${file.duration ? (file.duration / 60).toFixed(2) + ' min' : 'N/A'}</span>
+                            ${file.error_message ? `<span style="color: var(--error-color); font-weight: bold;">Error: ${file.error_message}</span>` : ''}
+                        </div>
+                    `;
+                    fileListContainer.appendChild(fileItem);
+                });
+            }
+        };
+
+        // Función para renderizar la playlist generada
+        const renderPlaylistList = () => {
+            playlistListContainer.innerHTML = ''; // Limpiar lista actual
+            if (generatedPlaylist.length === 0) {
+                noPlaylistMessage.style.display = 'block';
+            } else {
+                noPlaylistMessage.style.display = 'none';
+                generatedPlaylist.forEach((track, index) => {
+                    const playlistItem = document.createElement('div');
+                    playlistItem.classList.add('playlist-item');
+                    playlistItem.innerHTML = `
+                        <div class="playlist-info">
+                            <span class="filename">${index + 1}. ${track.filename}</span>
+                            <span class="small-text">BPM: ${track.bpm ? track.bpm.toFixed(2) : 'N/A'} | Clave: ${track.key || 'N/A'} (${track.camelot_key || 'N/A'}) | Duración: ${track.duration ? (track.duration / 60).toFixed(2) + ' min' : 'N/A'}</span>
+                        </div>
+                    `;
+                    playlistListContainer.appendChild(playlistItem);
+                });
+            }
+        };
+
+
+        // ====================================================================
+        // Event Listeners
+        // ====================================================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Cargar la lista de archivos al cargar la página por primera vez
+            fetch('/api/uploaded-files')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.uploaded_files) {
+                        uploadedFiles = data.uploaded_files;
+                        renderFileList();
+                    }
+                })
+                .catch(error => console.error('Error al cargar archivos iniciales:', error));
+
+            // Manejador de subida de archivos
+            uploadForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                uploadStatus.textContent = 'Cargando y analizando...';
+                uploadStatus.className = 'status-message info-message'; // Cambiar a clase de información
+                uploadButton.disabled = true; // Deshabilitar botón durante la carga
+
+                const formData = new FormData();
+                for (let i = 0; i < audioFile.files.length; i++) {
+                    formData.append('file', audioFile.files[i]);
+                }
+
+                try {
+                    const response = await fetch('/api/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        uploadStatus.textContent = data.message;
+                        uploadStatus.className = 'status-message success-message'; // Cambiar a clase de éxito
+                        uploadedFiles = data.uploaded_files; // Actualizar la lista con los datos del servidor
+                        renderFileList();
+                        audioFile.value = ''; // Limpiar la selección de archivos
+                    } else {
+                        uploadStatus.textContent = `Error al cargar: ${data.error}`;
+                        uploadStatus.className = 'status-message error-message'; // Cambiar a clase de error
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    uploadStatus.textContent = `Error de conexión: ${error.message}`;
+                    uploadStatus.className = 'status-message error-message';
+                } finally {
+                    uploadButton.disabled = false; // Habilitar botón de nuevo
+                }
+            });
+
+            // Manejador del botón Generar Mezcla
+            generateMixButton.addEventListener('click', async () => {
+                if (uploadedFiles.length === 0) {
+                    alert('Por favor, carga algunos archivos de audio primero.');
+                    return;
+                }
+
+                const mixDuration = mixDurationInput.value;
+                if (mixDuration < 5 || mixDuration > 120) {
+                    alert('La duración de la mezcla debe estar entre 5 y 120 minutos.');
+                    return;
+                }
+
+                // Reiniciar el estado de la mezcla en el frontend
+                mixStatusContainer.style.display = 'block';
+                mixStatusMessage.textContent = 'Iniciando generación de mezcla...';
+                mixStatusMessage.className = 'status-message info-message';
+                mixProgressBarContainer.style.display = 'block';
+                mixProgressBar.style.width = '0%';
+                mixProgressBar.textContent = '0%';
+                downloadMixLink.style.display = 'none';
+                mixDownloadContainer.style.display = 'none';
+                generateMixButton.disabled = true;
+
+                try {
+                    const response = await fetch('/api/generate-mix', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ mixDuration: parseFloat(mixDuration) })
+                    });
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.message || 'Error desconocido al iniciar la mezcla.');
+                    }
+
+                    // Iniciar el sondeo del estado de la mezcla
+                    const mixGenerationInterval = setInterval(async () => {
+                        const statusResponse = await fetch('/api/mix-status');
+                        const statusData = await statusResponse.json();
+
+                        mixStatusMessage.textContent = statusData.message;
+                        mixProgressBar.style.width = `${statusData.progress}%`;
+                        mixProgressBar.textContent = `${statusData.progress}%`;
+
+                        // Actualizar la clase de mensaje según el estado
+                        mixStatusMessage.classList.remove('success-message', 'error-message', 'info-message');
+                        if (statusData.status === 'completed') {
+                            mixStatusMessage.classList.add('success-message');
+                            clearInterval(mixGenerationInterval); // Detener el sondeo
+                            downloadMixLink.href = `/api/download-mix/${statusData.mix_filename}`;
+                            downloadMixLink.style.display = 'inline-block';
+                            mixDownloadContainer.style.display = 'block';
+                            generateMixButton.disabled = false; // Habilitar botón de nuevo
+                            alert('Mezcla generada con éxito. Puedes descargarla ahora.');
+
+                            // Opcional: Recargar la playlist generada si la API la proporciona
+                            // Esto asume que el servidor puede enviar la playlist final
+                            // Por ahora, el frontend no la recibe directamente, solo el estado.
+                            // Si el backend envía la playlist, se podría hacer algo como:
+                            // if (statusData.playlist) {
+                            //    generatedPlaylist = statusData.playlist;
+                            //    renderPlaylistList();
+                            // }
+
+                        } else if (statusData.status === 'error') {
+                            mixStatusMessage.classList.add('error-message');
+                            clearInterval(mixGenerationInterval); // Detener el sondeo
+                            generateMixButton.disabled = false; // Habilitar botón de nuevo
+                            alert('Error al generar la mezcla: ' + statusData.message);
+                        } else {
+                            mixStatusMessage.classList.add('info-message');
+                        }
+                    }, 3000); // Sondear cada 3 segundos
+                })
+                .catch(error => {
+                    console.error('Error initiating mix generation:', error);
+                    mixStatusMessage.textContent = `Error al iniciar la generación de la mezcla: ${error.message}`;
+                    mixStatusMessage.classList.remove('status-message', 'success-message');
+                    mixStatusMessage.classList.add('error-message');
+                    generateMixButton.disabled = false; // Habilitar botón de nuevo
+                    alert('Error al iniciar la generación de la mezcla: ' + error.message);
+                });
+            });
+
+            // Manejador del botón Limpiar Archivos
+            clearFilesButton.addEventListener('click', async () => {
+                if (confirm('¿Estás seguro de que quieres eliminar todos los archivos cargados y las mezclas generadas?')) {
+                    try {
+                        const response = await fetch('/api/clear-files', {
+                            method: 'POST'
+                        });
+                        if (!response.ok) {
+                            const errorData = await response.json();
+                            throw new Error(errorData.error || 'Unknown error');
+                        }
+                        const data = await response.json();
+                        console.log(data.message);
+                        uploadedFiles = []; // Vaciar la lista local
+                        generatedPlaylist = []; // Vaciar la playlist local
+                        renderFileList(); // Volver a renderizar la lista vacía
+                        renderPlaylistList(); // Volver a renderizar la playlist vacía
+
+                        // Resetear el estado de la mezcla
+                        if (mixStatusContainer) mixStatusContainer.style.display = 'none'; 
+                        if (mixStatusMessage) {
+                            mixStatusMessage.textContent = 'Listo para comenzar.';
+                            mixStatusMessage.classList.remove('success-message', 'error-message');
+                            mixStatusMessage.classList.add('status-message');
+                        }
+                        if (mixProgressBar) mixProgressBar.style.display = 'none';
+                        if (downloadMixLink) downloadMixLink.style.display = 'none';
+                        if (mixDownloadContainer) mixDownloadContainer.style.display = 'none';
+                        alert(data.message);
+                    } catch (error) {
+                        console.error('Error clearing files:', error);
+                        alert('Error al limpiar archivos: ' + error.message);
+                    }
+                }
+            });
+
+            // Inicializar las listas al cargar la página
+            renderFileList();
+            renderPlaylistList();
+            console.log('Inicialización de listas y adjunción de listeners completada.'); // Debug final
+        }); // Fin de DOMContentLoaded
+    </script>
+</body>
+</html>

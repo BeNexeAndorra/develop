@@ -1,0 +1,8 @@
+Flask==3.1.0
+pydub
+librosa
+numpy
+scipy
+soundfile
+Flask-CORS
+xmltodict # Para parsear XML de iTunes de forma más sencilla

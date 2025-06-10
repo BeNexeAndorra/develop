@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+*.egg
+*.egg-info/
+build/
+dist/
+.env
+
+# Flask specific
+instance/
+
+# Temporary files created by your app
+uploads/
+mix_outputs/
+
+# macOS specific
+.DS_Store
+
+# PyDub/FFmpeg related temp files (if any are left behind)
+# Add specific patterns if you notice any other temporary audio files
+*.mp3.temp
+*.wav.temp
+*.mp3 # <-- Afegir això si els MP3 de prova es generen a la carpeta principal
+*.wav # <-- Afegir això si els WAV de prova es generen a la carpeta principal
+
+# Logs (if you generate log files in a specific directory)
+logs/
+*.log
